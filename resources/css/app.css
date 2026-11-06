@@ -179,3 +179,5 @@ input:focus {
 tbody tr:hover {
     background: #f9fafb;
 }
+.banner.info { background: #dbeafe; color: #1e40af; 
+}

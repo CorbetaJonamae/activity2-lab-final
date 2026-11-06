@@ -1,29 +1,33 @@
 <?php
-
 namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        User::updateOrCreate(['email' => 'admin@example.com'], [
-            'name' => 'Admin User',
-            'password' => Hash::make('password123'),
-            'role' => 'admin',
-        ]);
-
-        User::updateOrCreate(['email' => 'user@example.com'], [
-            'name' => 'Regular User',
-            'password' => Hash::make('password123'),
-            'role' => 'user',
-        ]);
+        $accounts = [
+            [
+                'name' => 'Admin User',
+                'email' => env('SEED_ADMIN_EMAIL', 'admin@example.com'),
+                'password' => env('SEED_ADMIN_PASSWORD'),
+                'role' => 'admin',
+            ],
+            [
+                'name' => 'Regular User',
+                'email' => env('SEED_USER_EMAIL', 'user@example.com'),
+                'password' => env('SEED_USER_PASSWORD'),
+                'role' => 'user',
+            ],
+        ];
+        foreach ($accounts as $account) {
+            if (empty($account['password'])) {
+                throw new \RuntimeException(
+                    'Set SEED_ADMIN_PASSWORD and SEED_USER_PASSWORD in .env
+before seeding.'
+                );
+            }
+            User::updateOrCreate(['email' => $account['email']], $account);
+        }
     }
 }
